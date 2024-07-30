@@ -207,15 +207,13 @@ def print_fan_info(configuration):
     print(f'Fan constraints: Min {fan_constraints.min}% - Max {fan_constraints.max}%')
 
 def fan_control(configuration):
-    gpu_handle = get_GPU_handle(configuration.gpu_name, configuration.gpu_uuid)
-    print_GPU_info(gpu_handle)
-    #control_and_monitor(gpu_handle, configuration)
-
-    # Infinite loop, one must kill the process to stop it
     while(True):
-        fan_control_subroutine(gpu_handle, configuration)
-
+        deviceCount = pynvml.nvmlDeviceGetCount()
+        for i in range(deviceCount):
+            handle = pynvml.nvmlDeviceGetHandleByIndex(i)
+            fan_control_subroutine(handle, configuration)
         time.sleep(configuration.time_interval)
+ 
 
 
 # Control GPU functions and monitor for changes (e.g. temperature)
